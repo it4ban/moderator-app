@@ -18,10 +18,15 @@ add_executable(${PROJECT_NAME}
 )
 
 add_subdirectory(external/glfw)
-target_link_libraries(${PROJECT_NAME} PRIVATE glfw)
-
 add_subdirectory(external/glad)
-target_link_libraries(${PROJECT_NAME} PRIVATE glad)
+add_subdirectory(external/imgui)
+
+target_link_libraries(${PROJECT_NAME} 
+    PRIVATE 
+        imgui
+        glfw
+        glad
+)
 
 if(APPLE)
     target_compile_definitions(${PROJECT_NAME}

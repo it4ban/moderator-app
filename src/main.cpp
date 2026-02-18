@@ -1,6 +1,10 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include "imgui.h";
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
+
 #include <iostream>
 
 int g_windowWidth = 640;
@@ -36,7 +40,8 @@ int main(void)
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
     /* Create a windowed mode window and its OpenGL context */
-    GLFWwindow* pWindow = glfwCreateWindow(g_windowWidth, g_windowHeight, "Battle City", nullptr, nullptr);
+    float main_scale = ImGui_ImplGlfw_GetContentScaleForMonitor(glfwGetPrimaryMonitor());
+    GLFWwindow* pWindow = glfwCreateWindow((int)(g_windowWidth * main_scale), (int)(g_windowHeight * main_scale), "Moderator app", nullptr, nullptr);
     if (!pWindow)
     {
         std::cout << "Couldn't create window" << std::endl;
@@ -60,6 +65,15 @@ int main(void)
     glfwSetWindowSizeCallback(pWindow, glfwWindowSizeCallback);
     glfwSetKeyCallback(pWindow, glfwKeyCallback);
 
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO io = ImGui::GetIO(); (void)io;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+
+    ImGui_ImplGlfw_InitForOpenGL(pWindow, true);
+    ImGui_ImplOpenGL3_Init();
+
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(pWindow))
     {
@@ -73,6 +87,11 @@ int main(void)
         glfwPollEvents();
     }
 
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
+
+    glfwDestroyWindow(pWindow);
     glfwTerminate();
     return 0;
 }
