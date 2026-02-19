@@ -76,8 +76,11 @@ int main(void)
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
     io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
+    std::string fontPathStr = std::string(ASSETS_DIR) + "/fonts/Roboto_Condensed-Regular.ttf";
+    const char* fontPath = fontPathStr.c_str();
+
     ImFont* font = io.Fonts->AddFontFromFileTTF(
-        (std::string(ASSETS_DIR) + "/fonts/Roboto_Condensed-Regular.ttf").c_str(),
+        fontPath,
         18.0f,
         nullptr,
         io.Fonts->GetGlyphRangesDefault()
@@ -86,8 +89,7 @@ int main(void)
     if (!font)
     {
         std::cout << "FAILED to load font. Check path / working directory.\n";
-        // Можно временно выключить abort/assert:
-        // return -1;
+        return -1;
     }
 
     ImGui::StyleColorsDark();
@@ -108,8 +110,8 @@ int main(void)
         ImGui::DockSpaceOverViewport(0, ImGui::GetMainViewport());
         ImGui::ShowDemoWindow();
         
-        ImGui::Begin("Panel");
-        ImGui::Text("Hello docking!");
+        ImGui::Begin("Управление заявками");
+        ImGui::Text("Пожалуйста укажите действующий логин и пароль");
 
         static char buffer[1024] = "";
 

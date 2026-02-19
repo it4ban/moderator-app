@@ -15,6 +15,8 @@ project(${PROJECT_NAME})
 
 add_executable(${PROJECT_NAME}
     src/main.cpp
+    src/Renderer.hpp
+    src/Renderer.cpp
 )
 
 add_subdirectory(external/glfw)
