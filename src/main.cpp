@@ -1,14 +1,14 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include "imgui.h";
+#include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 
 #include <iostream>
 
-int g_windowWidth = 640;
-int g_windowHeight = 480;
+int g_windowWidth = 920;
+int g_windowHeight = 600;
 
 void glfwWindowSizeCallback(GLFWwindow* pWindow, int width, int height)
 {
@@ -51,6 +51,7 @@ int main(void)
 
     /* Make the window's context current */
     glfwMakeContextCurrent(pWindow);
+    glfwSwapInterval(1);
     
     if (!gladLoadGL()) {
         std::cout << "Can't load GLAD" << std::endl;
@@ -59,32 +60,69 @@ int main(void)
     
     std::cout << "Renderer: " << glGetString(GL_RENDERER) << std::endl;
     std::cout << "OpenGL version " << glGetString(GL_VERSION) << std::endl;
-    
+
     glClearColor(1, 1, 0, 1);
-    
+        
     glfwSetWindowSizeCallback(pWindow, glfwWindowSizeCallback);
     glfwSetKeyCallback(pWindow, glfwKeyCallback);
 
     IMGUI_CHECKVERSION();
+
     ImGui::CreateContext();
-    ImGuiIO io = ImGui::GetIO(); (void)io;
+
+    ImGuiIO& io = ImGui::GetIO();
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+    io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+
+    ImGui::StyleColorsDark();
 
     ImGui_ImplGlfw_InitForOpenGL(pWindow, true);
-    ImGui_ImplOpenGL3_Init();
+    ImGui_ImplOpenGL3_Init("#version 410");
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(pWindow))
     {
+        /* Poll for and process events */
+        glfwPollEvents();
+
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+        
+        ImGui::DockSpaceOverViewport(0, ImGui::GetMainViewport());
+        ImGui::ShowDemoWindow();
+        
+        ImGui::Begin("Panel");
+        ImGui::Text("Hello docking!");
+
+        static char buffer[1024] = "";
+
+        ImGui::InputText("Логин", buffer, sizeof(buffer));
+        ImGui::InputText("Пароль", buffer, sizeof(buffer));
+        ImGui::End();
+        
         /* Render here */
+        ImGui::Render();
+
+        int w, h;
+        glfwGetFramebufferSize(pWindow, &w, &h);
+        glViewport(0, 0, w, h);
+        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
+
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+        if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+        {
+            GLFWwindow* backup = glfwGetCurrentContext();
+            ImGui::UpdatePlatformWindows();
+            ImGui::RenderPlatformWindowsDefault();
+            glfwMakeContextCurrent(backup);
+        }
 
         /* Swap front and back buffers */
         glfwSwapBuffers(pWindow);
-
-        /* Poll for and process events */
-        glfwPollEvents();
     }
 
     ImGui_ImplOpenGL3_Shutdown();
