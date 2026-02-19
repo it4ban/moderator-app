@@ -28,6 +28,10 @@ target_link_libraries(${PROJECT_NAME}
         glad
 )
 
+target_compile_definitions(${PROJECT_NAME} PRIVATE
+    ASSETS_DIR="${CMAKE_SOURCE_DIR}/src/assets"
+)
+
 if(APPLE)
     target_compile_definitions(${PROJECT_NAME}
         PRIVATE

@@ -71,9 +71,24 @@ int main(void)
     ImGui::CreateContext();
 
     ImGuiIO& io = ImGui::GetIO();
+    
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
     io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+
+    ImFont* font = io.Fonts->AddFontFromFileTTF(
+        (std::string(ASSETS_DIR) + "/fonts/Roboto_Condensed-Regular.ttf").c_str(),
+        18.0f,
+        nullptr,
+        io.Fonts->GetGlyphRangesDefault()
+    );
+
+    if (!font)
+    {
+        std::cout << "FAILED to load font. Check path / working directory.\n";
+        // Можно временно выключить abort/assert:
+        // return -1;
+    }
 
     ImGui::StyleColorsDark();
 
